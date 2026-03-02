@@ -7,27 +7,29 @@ context.check_hostname = False
 context.verify_mode = ssl.CERT_NONE
 
 def conectar_obtener():
+    secure_socket = None
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        secure_socket = context.wrap_socket(client_socket, server_hostname='ip santiagokali')
-        secure_socket.connect(('ip kali', 5555))
+        client_socket.settimeout(10)
+        
+        client_socket.connect(('10.73.131.178', 5555))
+        
+        secure_socket = context.wrap_socket(client_socket, server_hostname='10.73.131.178')
+        
         secure_socket.send("clave123".encode())
+        
         respuesta = secure_socket.recv(1024).decode()
         print(respuesta)
+        
         datos_recibidos = secure_socket.recv(1024).decode()
         label_datos.config(text=datos_recibidos)
-        
-        if "CPU" in datos_recibidos:
-            cpu_val = float(datos_recibidos.split("CPU "[1].split("%")[0]))
-            if cpu_val > 80.0:
-                label_alerta.config(text="Uso de CPU alto", fg="red")
-            else:
-                label_alerta.config(text="Sistema Estable",fg="green")
-    
-        secure_socket.close()
+                
     except Exception as e:
         label_datos.config(text="Error de Conexión")
-        label_alerta.config(text=str(e), fg="red")
+        label_alerta.config(text=f"Error: {str(e)}", fg="red")
+    finally:
+        if secure_socket:
+            secure_socket.close()
         
 ventana = tk.Tk()
 ventana.title("Monitoreo - Server")
