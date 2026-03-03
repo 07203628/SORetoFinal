@@ -22,7 +22,7 @@ En la terminal y dentro de el mismo directorio donde se encuentran los códigos 
 ```bash
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365 -nodes
 ```
-.
+
 En los datos que pide se puede poner lo que sea o simplemente dar enter a todo, no es relevante para este caso.
 
 Para generar una llave a otro servidor simplemente cambiamos '-keyout server.key' y '-out server.crt' por lo que se ponga en esta parte del código:
