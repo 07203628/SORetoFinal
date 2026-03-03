@@ -1,35 +1,49 @@
 import socket
 import ssl
 import tkinter as tk
+import threading
+
+HOST = '0.0.0.0'
+PORT = 5555
+AUTH_TOKEN = "clave123"
 
 context = ssl.create_default_context()
 context.check_hostname = False
 context.verify_mode = ssl.CERT_NONE
 
-def conectar_obtener():
-    secure_socket = None
+def actualizar_interfaz(widget, **kwargs):
+    ventana.after(0, lambda: widget.config(**kwargs))
+    
+def terminar_tarea():
+    ventana.after(0, lambda: btn_actualizar.config(state=tk.NORMAL))
+    
+def iniciar_conexion():
+    btn_actualizar.config(state=tk.DISABLED)
+    label_alerta.config(text="Conectando...", fg="blue")
+    label_datos.config(text="Esperando respuesta del servidor...")    
+    hilo = threading.Thread(target=tarea_red, daemon=True)
+    hilo.start()
+
+def tarea_red():
     try:
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.settimeout(10)
-        
-        client_socket.connect(('10.73.131.178', 5555))
-        
-        secure_socket = context.wrap_socket(client_socket, server_hostname='10.73.131.178')
-        
-        secure_socket.send("clave123".encode())
-        
-        respuesta = secure_socket.recv(1024).decode()
-        print(respuesta)
-        
-        datos_recibidos = secure_socket.recv(1024).decode()
-        label_datos.config(text=datos_recibidos)
+        with socket.create_connection((HOST, PORT), timeout=10) as client_socket:
+            with context.wrap_socket(client_socket, server_hostname=HOST) as secure_socket:
+                secure_socket.send(AUTH_TOKEN.encode())
+                respuesta_auth = secure_socket.recv(1024).decode('utf-8')
+                print(f"Respuesta del servidor: {respuesta_auth}")
                 
+                if "Autenticado" in respuesta_auth:
+                    datos_recibidos = secure_socket.recv(1024).decode('utf-8')
+                    actualizar_interfaz(label_datos, text=datos_recibidos)
+                    actualizar_interfaz(label_alerta, text="Conexión establecida.", fg="green")
+                else:
+                    actualizar_interfaz(label_datos, text="Autenticación fallida")
+                    actualizar_interfaz(label_alerta, text="Acceso denegado", fg="red")
     except Exception as e:
-        label_datos.config(text="Error de Conexión")
-        label_alerta.config(text=f"Error: {str(e)}", fg="red")
+        actualizar_interfaz(label_datos, text="Error de Conexión")
+        actualizar_interfaz(label_alerta, text=f"Error: {str(e)}", fg="red")
     finally:
-        if secure_socket:
-            secure_socket.close()
+        terminar_tarea()    
         
 ventana = tk.Tk()
 ventana.title("Monitoreo - Server")
@@ -44,7 +58,7 @@ label_datos.pack(pady=10)
 label_alerta = tk.Label(ventana, text="", font=("Helvetica", 12, "bold"))
 label_alerta.pack(pady=5)
 
-btn_actualizar = tk.Button(ventana, text="Obtener Estado del Servidor", command=conectar_obtener, height=2, bg="lightblue")
+btn_actualizar = tk.Button(ventana, text="Obtener Estado del Servidor", command=iniciar_conexion, height=2, bg="lightblue")
 btn_actualizar.pack(pady=10)
 
 ventana.mainloop()

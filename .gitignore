@@ -1,0 +1,22 @@
+# Ignorar archivos de claves y certificados
+*.key
+*.pem
+*.crt
+
+# Ignorar archivos de configuración de entorno
+.env
+.env.local
+.env.*.local
+
+# Ignorar archivos de log
+*.log
+
+node_modules/
+
+#Ignorar imagenes y archivos de medios del readme
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.assets/
