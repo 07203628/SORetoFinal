@@ -8,7 +8,7 @@
 ```bash
 pip install psutil
 ```
-**Powershell** (si no reconoce 'pip')
+**Powershell** (si no reconoce `pip`)
 ```Powershell
 python -m pip install psutil
 ```
@@ -25,7 +25,7 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -d
 
 En los datos que pide se puede poner lo que sea o simplemente dar enter a todo, no es relevante para este caso.
 
-Para generar una llave a otro servidor simplemente cambiamos '-keyout server.key' y '-out server.crt' por lo que se ponga en esta parte del código:
+Para generar una llave a otro servidor simplemente cambiamos `-keyout server.key` y `-out server.crt` por lo que se ponga en esta parte del código:
 
 ```python
 def main():
@@ -36,7 +36,7 @@ def main():
 
 **2. Configurar cliente**
 
-Para configurar el cliente lo unico que debemos hacer es cambiar 'HOST = 0.0.0.0' a la dirección ip que se especifique en la presentación.
+Para configurar el cliente lo unico que debemos hacer es cambiar `HOST = 0.0.0.0` a la dirección ip que se especifique en la presentación.
 
 ```python
 HOST = '0.0.0.0'
@@ -46,7 +46,7 @@ AUTH_TOKEN = "clave123"
 
 **3. Ejecución** 
 
-En la terminal, dentro del directorio donde guardaste los archivos '.py' vas a ingresar:
+En la terminal, dentro del directorio donde guardaste los archivos `.py` vas a ingresar:
 ```bash
 python3 cliente.py
 ```
