@@ -12,11 +12,3 @@
 *.log
 
 node_modules/
-
-#Ignorar imagenes y archivos de medios del readme
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.svg
-*.assets/
